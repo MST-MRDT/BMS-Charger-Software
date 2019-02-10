@@ -283,7 +283,7 @@ void getCellVoltage(uint16_t cell_voltage[RC_BMSBOARD_VMEASmV_DATACOUNT])
           Serial.println(" Undervoltage");
         }//end if
       }//end if
-      if(cell_voltage[i] = CELL_VOLTS_MIN)
+      if(cell_voltage[i] == CELL_VOLTS_MIN)
       {
         error_report[i] = RC_BMSBOARD_ERROR_PINFAULT;
 
@@ -527,35 +527,35 @@ void notifyEstop() //Buzzer sound: beeeeeeeeeeeeeeeeeeeep beeeeeeeeeep beeeeep b
 
   digitalWrite(BUZZER_CTR_PIN, HIGH);
   digitalWrite(SW_ERR_PIN, HIGH);
-  delay(2000);
-  digitalWrite(BUZZER_CTR_PIN, LOW);
-  digitalWrite(SW_ERR_PIN, LOW);
-  delay(250);
-
-  digitalWrite(BUZZER_CTR_PIN, HIGH);
-  digitalWrite(SW_ERR_PIN, HIGH);
-  delay(1000);
-  digitalWrite(BUZZER_CTR_PIN, LOW);
-  digitalWrite(SW_ERR_PIN, LOW);
-  delay(250);
-
-  digitalWrite(BUZZER_CTR_PIN, HIGH);
-  digitalWrite(SW_ERR_PIN, HIGH);
   delay(500);
   digitalWrite(BUZZER_CTR_PIN, LOW);
   digitalWrite(SW_ERR_PIN, LOW);
-  delay(250);
+  delay(100);
 
   digitalWrite(BUZZER_CTR_PIN, HIGH);
   digitalWrite(SW_ERR_PIN, HIGH);
   delay(250);
   digitalWrite(BUZZER_CTR_PIN, LOW);
   digitalWrite(SW_ERR_PIN, LOW);
-  delay(250);
+  delay(100);
 
   digitalWrite(BUZZER_CTR_PIN, HIGH);
   digitalWrite(SW_ERR_PIN, HIGH);
   delay(100);
+  digitalWrite(BUZZER_CTR_PIN, LOW);
+  digitalWrite(SW_ERR_PIN, LOW);
+  delay(100);
+
+  digitalWrite(BUZZER_CTR_PIN, HIGH);
+  digitalWrite(SW_ERR_PIN, HIGH);
+  delay(50);
+  digitalWrite(BUZZER_CTR_PIN, LOW);
+  digitalWrite(SW_ERR_PIN, LOW);
+  delay(100);
+
+  digitalWrite(BUZZER_CTR_PIN, HIGH);
+  digitalWrite(SW_ERR_PIN, HIGH);
+  delay(25);
   digitalWrite(BUZZER_CTR_PIN, LOW);
   digitalWrite(SW_ERR_PIN, LOW);
 
@@ -568,14 +568,14 @@ void notifyLogicSwitch() //Buzzer sound: beeep beeep
 
   digitalWrite(BUZZER_CTR_PIN, HIGH);
   digitalWrite(SW_ERR_PIN, HIGH);
-  delay(250);
+  delay(100);
   digitalWrite(BUZZER_CTR_PIN, LOW);
   digitalWrite(SW_ERR_PIN, LOW);
-  delay(250);
+  delay(100);
 
   digitalWrite(BUZZER_CTR_PIN, HIGH);
   digitalWrite(SW_ERR_PIN, HIGH);
-  delay(250);
+  delay(100);
   digitalWrite(BUZZER_CTR_PIN, LOW);
   digitalWrite(SW_ERR_PIN, LOW);
 
@@ -588,24 +588,73 @@ void notifyReboot() //Buzzer sound: beeeeeeeeeep beeep beeep
 
   digitalWrite(BUZZER_CTR_PIN, HIGH);
   digitalWrite(SW_ERR_PIN, HIGH);
-  delay(1000);
+  delay(500);
   digitalWrite(BUZZER_CTR_PIN, LOW);
   digitalWrite(SW_ERR_PIN, LOW);
-  delay(250);
+  delay(100);
 
   digitalWrite(BUZZER_CTR_PIN, HIGH);
   digitalWrite(SW_ERR_PIN, HIGH);
   delay(250);
   digitalWrite(BUZZER_CTR_PIN, LOW);
   digitalWrite(SW_ERR_PIN, LOW);
-  delay(250);
+  delay(100);
+
+  digitalWrite(BUZZER_CTR_PIN, HIGH);
+  digitalWrite(SW_ERR_PIN, HIGH);
+  delay(100);
+  digitalWrite(BUZZER_CTR_PIN, LOW);
+  digitalWrite(SW_ERR_PIN, LOW);
+  delay(100);
+
+  digitalWrite(BUZZER_CTR_PIN, HIGH);
+  digitalWrite(SW_ERR_PIN, HIGH);
+  delay(50);
+  digitalWrite(BUZZER_CTR_PIN, LOW);
+  digitalWrite(SW_ERR_PIN, LOW);
+  delay(100);
+
+  digitalWrite(BUZZER_CTR_PIN, HIGH);
+  digitalWrite(SW_ERR_PIN, HIGH);
+  delay(25);
+  digitalWrite(BUZZER_CTR_PIN, LOW);
+  digitalWrite(SW_ERR_PIN, LOW);
+  delay(100);
+
+  digitalWrite(BUZZER_CTR_PIN, HIGH);
+  digitalWrite(SW_ERR_PIN, HIGH);
+  delay(25);
+  digitalWrite(BUZZER_CTR_PIN, LOW);
+  digitalWrite(SW_ERR_PIN, LOW);
+  delay(100);
+
+  digitalWrite(BUZZER_CTR_PIN, HIGH);
+  digitalWrite(SW_ERR_PIN, HIGH);
+  delay(50);
+  digitalWrite(BUZZER_CTR_PIN, LOW);
+  digitalWrite(SW_ERR_PIN, LOW);
+  delay(100);
+
+  digitalWrite(BUZZER_CTR_PIN, HIGH);
+  digitalWrite(SW_ERR_PIN, HIGH);
+  delay(100);
+  digitalWrite(BUZZER_CTR_PIN, LOW);
+  digitalWrite(SW_ERR_PIN, LOW);
+  delay(100);
 
   digitalWrite(BUZZER_CTR_PIN, HIGH);
   digitalWrite(SW_ERR_PIN, HIGH);
   delay(250);
   digitalWrite(BUZZER_CTR_PIN, LOW);
   digitalWrite(SW_ERR_PIN, LOW);
+  delay(100);
 
+  digitalWrite(BUZZER_CTR_PIN, HIGH);
+  digitalWrite(SW_ERR_PIN, HIGH);
+  delay(500);
+  digitalWrite(BUZZER_CTR_PIN, LOW);
+  digitalWrite(SW_ERR_PIN, LOW);
+  
   return;
 }//end func
 

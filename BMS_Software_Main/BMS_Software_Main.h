@@ -60,7 +60,7 @@ const int CELL_MEAS_PINS[] = {LOGIC_V_MEAS_PIN, C1_V_MEAS_PIN, C2_V_MEAS_PIN, C3
 													// Noise is 2mV, meaning the smallest current that the device is able to resolve is 0.3A
 #define CURRENT_MAX         	200000//mA; Current values must be sent over RoveComm as mA
 #define CURRENT_MIN         	-196207//mA
-#define OVERCURRENT				20000 //mA //TODO: This value should be lower, but where?
+#define OVERCURRENT				10000 //mA //TODO: This value should be lower, but where?
 #define CURRENT_ADC_MIN			0 //bits  TODO: Must test ADC MIN & MAX with hardware and adjust these values
 #define CURRENT_ADC_MAX			4096 //bits
 
