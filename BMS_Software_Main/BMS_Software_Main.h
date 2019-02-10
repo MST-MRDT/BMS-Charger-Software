@@ -58,27 +58,27 @@ const int CELL_MEAS_PINS[] = {LOGIC_V_MEAS_PIN, C1_V_MEAS_PIN, C2_V_MEAS_PIN, C3
 #define SENSOR_SCALE        	0.5
 #define SENSOR_BIAS         	VCC * SENSOR_SCALE //Viout voltage when current is at 0A (aka quiescent output voltage)
 													// Noise is 2mV, meaning the smallest current that the device is able to resolve is 0.3A
-#define CURRENT_MAX         	(VCC - SENSOR_BIAS - 330) / SENSOR_SENSITIVITY //mA; Current values must be sent over RoveComm as mA
-#define CURRENT_MIN         	-(SENSOR_BIAS - 330) / SENSOR_SENSITIVITY //mA
-#define OVERCURRENT				50000 //mA //TODO: This value should be lower, but where?
+#define CURRENT_MAX         	200000//mA; Current values must be sent over RoveComm as mA
+#define CURRENT_MIN         	-196207//mA
+#define OVERCURRENT				20000 //mA //TODO: This value should be lower, but where?
 #define CURRENT_ADC_MIN			0 //bits  TODO: Must test ADC MIN & MAX with hardware and adjust these values
 #define CURRENT_ADC_MAX			4096 //bits
 
 // Voltage Measurments
 #define VOLTS_MIN           	0 //mV
+#define CELL_VOLTS_MIN        2400//mV
 #define PACK_VOLTS_MAX      	33600 //mV //TODO: This num may change as we test using hardware
 #define CELL_VOLTS_MAX 			4200 //mV
 #define PACK_UNDERVOLTAGE		21600 //mV
 #define PACK_LOWVOLTAGE			25000 //mV
 #define PACK_SAFETY_LOW			PACK_UNDERVOLTAGE - 4000 //mV
-#define CELL_UNDERVOLTAGE		2700 //mV
-#define CELL_SAFETY_LOW			CELL_UNDERVOLTAGE - 1000 //mV
+#define CELL_UNDERVOLTAGE		2650 //mV
 #define PACK_EFFECTIVE_ZERO		5000 //mV
 #define CELL_EFFECTIVE_ZERO		1000 //mV		
 #define PACK_V_ADC_MIN			0 //bits  TODO: Must test ADC MIN & MAX with hardware and adjust these values
 #define PACK_V_ADC_MAX			4096 //bits
-#define CELL_V_ADC_MIN			0 //bits  TODO: Must test ADC MIN & MAX with hardware and adjust these values
-#define CELL_V_ADC_MAX			4096 //bits
+#define CELL_V_ADC_MIN			2320 //bits  TODO: Must test ADC MIN & MAX with hardware and adjust these values
+#define CELL_V_ADC_MAX			3790 //bits
 
 // TMP37 Temp Sensor Specs 
 	//Find at: https://www.digikey.com/products/en?mpart=TMP37FT9Z&v=505
