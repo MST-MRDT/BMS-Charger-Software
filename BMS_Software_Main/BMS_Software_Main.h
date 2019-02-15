@@ -122,6 +122,9 @@ void getOutVoltage(int &pack_out_voltage);
 void getBattTemp(uint16_t &batt_temp);
 
 
+void updateLCD(int32_t mainCurrent, uint16_t cellVoltages[]);
+
+
 void reactOverCurrent();
 
 
@@ -132,6 +135,9 @@ void reactOverTemp();
 
 
 void reactForgottenLogicSwitch();
+
+
+void reactLowVoltage(uint16_t cell_voltage[RC_BMSBOARD_VMEASmV_DATACOUNT]);
 
 
 void setEstop(uint8_t data);

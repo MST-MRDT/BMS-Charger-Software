@@ -41,7 +41,7 @@ void loop()
 
 	getCellVoltage(cell_voltages);
   reactUnderVoltage();
-  //reactLowVoltage();
+  reactLowVoltage(cell_voltages);
 
 	getOutVoltage(pack_out_voltage);
   reactForgottenLogicSwitch();
@@ -89,6 +89,7 @@ void loop()
         digitalWrite(SW_IND_PIN, LOW);
         sw_ind_state = false;
       }//end if
+      updateLCD(main_current, cell_voltages);
     }//end if
 
     num_loop++;
@@ -106,8 +107,10 @@ static float time_of_overcurrent = 0;
 //static int num_cell_undervoltage_measured = 0;
 static bool pack_undervoltage_state = false;
 static bool cell_undervoltage_state = false;
-//static bool low_voltage_state = false;
-//int static time_low_voltage_reminder = 0;
+static bool low_voltage_state = false;
+int static num_low_voltage_reminder = 0;
+static int time_of_low_voltage = 0;
+
   //Temp
 static bool overtemp_state = false;
 static bool fans_on = false;
@@ -353,6 +356,65 @@ Serial.println(analogRead(TEMP_degC_MEAS_PIN));
   return;
 }//end func
 
+/////////////////////////////////////
+
+void updateLCD(int32_t mainCurrent, uint16_t cellVoltages[])
+{
+  
+  Serial.begin(9600); //Start serial communication at 9600
+  
+  Serial7.begin(9600); //Start communication with Serial7
+  
+  const int NUM_CELLS = 8; //this should be in header?
+  bool LCD_Update = false;
+  float time1 = 0;
+  float packVoltage = 0; //V not mV
+  float packCurrent = 0;//A not mA
+
+  packVoltage = (static_cast<float>(cellVoltages[0]) / 1000);
+  packCurrent = (static_cast<float>(mainCurrent) / 1000);
+
+  if(LCD_Update == false)
+  {
+    Serial.println("Waiting to Update LCD...");
+    time1 = millis();
+    LCD_Update = true;
+  }
+
+  Serial.println("Updating Pack Voltage & Current...");
+  //Send the clear command to the display - this returns the cursor to the beginning of the display
+  Serial7.write('|'); //Setting character
+  Serial7.write('-'); //Clear display
+  
+  Serial7.print("Pack:");
+  Serial7.print(packVoltage, 1); //packVoltage from BMS, in V?
+  Serial7.print("V");
+  Serial7.print(" Cur:");
+  Serial7.print(packCurrent, 2); //packCurrent from BMS, in A?
+  Serial7.print("A");
+  
+  for(int i = 0; i < NUM_CELLS; i++)
+  {
+    float temp_cell_voltage = 0;
+    temp_cell_voltage = (static_cast<float>(cellVoltages[i]) / 1000);
+    Serial.println("Updating Cell Voltage");
+    Serial7.print(i+1);
+    Serial7.print(": ");
+    Serial7.print(temp_cell_voltage, 1); //cellVoltage from BMS in V?  shows one decimal place
+    if((i+1)%3 == 0)
+    {
+      Serial7.print("V");
+    }     
+    else
+    {
+      Serial7.print("V "); 
+    }
+  } 
+  LCD_Update = false;
+}
+
+/////////////////////////////////////////////
+
 void reactOverCurrent()
 { //TODO: RED will see overcurrent for 10sec before recheck time is up.
   if(overcurrent_state == false)
@@ -490,6 +552,26 @@ void reactForgottenLogicSwitch()
   }//end if
   return;
 }//end func
+
+void reactLowVoltage( uint16_t cell_voltage[RC_BMSBOARD_VMEASmV_DATACOUNT])
+{
+  if((cell_voltage[0] > PACK_UNDERVOLTAGE) && (cell_voltage[0] <= PACK_LOWVOLTAGE) && (low_voltage_state = false))//first instance of low voltage
+  { 
+    low_voltage_state = true;
+    notifyLowVoltage();
+    time_of_low_voltage = millis();
+    num_low_voltage_reminder = 1;
+  }
+  else if((cell_voltage[0] > PACK_UNDERVOLTAGE) && (cell_voltage[0] <= PACK_LOWVOLTAGE) && (low_voltage_state = true))//following instances of low voltage
+  {
+    if(millis() >= (time_of_low_voltage + (num_low_voltage_reminder * LOGIC_SWITCH_REMINDER)))
+    { 
+      notifyLowVoltage();
+      num_low_voltage_reminder++;
+    }
+  }
+}
+
 
 void setEstop(uint8_t data)
 {
