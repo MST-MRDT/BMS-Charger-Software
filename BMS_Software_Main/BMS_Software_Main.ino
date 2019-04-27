@@ -297,6 +297,7 @@ void getOutVoltage(int &pack_out_voltage)
   {
     forgotten_logic_switch = false;
     time_switch_forgotten = 0;
+    num_out_voltage_loops = 0;
   }//end if
   if(pack_out_voltage < PACK_EFFECTIVE_ZERO)
   {
