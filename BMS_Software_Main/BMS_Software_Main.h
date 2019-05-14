@@ -89,6 +89,7 @@ const int CELL_MEAS_PINS[] = {LOGIC_V_MEAS_PIN, C1_V_MEAS_PIN, C2_V_MEAS_PIN, C3
 #define TEMP_THRESHOLD      	38000 //mdeg C  //About 100 degF
 #define TEMP_ADC_MIN      		0 //bits
 #define TEMP_ADC_MAX      		4096 //bits
+#define NUM_TEMP_AVERAGE		10 //batt_temp will be average of this many measurements
 
 // Delay Constants
 #define ROVECOMM_DELAY      	5 //msec		//Used after RoveComm.Write() to give data time to send.

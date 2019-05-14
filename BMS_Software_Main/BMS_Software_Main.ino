@@ -15,6 +15,7 @@ bool pinfault_state = false;
 int num_loop = 0;
 bool sw_ind_state = false;
 uint32_t time_since_Rovecomm_update = 0;
+uint32_t meas_batt_temp[NUM_TEMP_AVERAGE];
 
 void setup()
 {
@@ -122,6 +123,8 @@ static int num_low_voltage_reminder = 0;
 static int time_of_low_voltage = 0;
 
   //Temp
+static int num_meas_batt_temp = 0;
+static bool batt_temp_avail = false;
 static bool overtemp_state = false;
 static bool fans_on = false;
   //Logic Switch
@@ -321,22 +324,40 @@ void getOutVoltage(int &pack_out_voltage)
 
 void getBattTemp(uint32_t &batt_temp)
 {
-  batt_temp = (1060 * (map(analogRead(TEMP_degC_MEAS_PIN), TEMP_ADC_MIN, TEMP_ADC_MAX, TEMP_MIN, TEMP_MAX))/1000);
+  meas_batt_temp[num_meas_batt_temp] = (1060 * (map(analogRead(TEMP_degC_MEAS_PIN), TEMP_ADC_MIN, TEMP_ADC_MAX, TEMP_MIN, TEMP_MAX))/1000);
+  num_meas_batt_temp ++;
   
-  if(batt_temp < TEMP_THRESHOLD)
+  if(num_meas_batt_temp % NUM_TEMP_AVERAGE == 0)
   {
-    overtemp_state = false;
-
-  }//end if
-  if(batt_temp > TEMP_THRESHOLD)
-  {
-    delay(DEBOUNCE_DELAY);
-
-    if(map(analogRead(TEMP_degC_MEAS_PIN), TEMP_ADC_MIN, TEMP_ADC_MAX, TEMP_MIN, TEMP_MAX) > TEMP_THRESHOLD)
+    for(int i = 0; i < NUM_TEMP_AVERAGE; i++)
     {
-      overtemp_state = true;
+      batt_temp += meas_batt_temp[i];
+    }//end for
+    batt_temp /= NUM_TEMP_AVERAGE; //batt_temp is the average of all the measurments in the meas_batt_temp[] array.
+    num_meas_batt_temp = 0;
+    batt_temp_avail = true; //Set to true after first batt_temp value is avail. Avoids acting on overtemp before the first average is computed.
+  
+    //Serial.print("batt_temp: ");
+    //Serial.println(batt_temp);
+  }//end if
+  
+  if(batt_temp_avail == true)
+  {
+    if(batt_temp < TEMP_THRESHOLD)
+    {
+      overtemp_state = false;
+    }//end if
+    if(batt_temp > TEMP_THRESHOLD)
+    {
+      delay(DEBOUNCE_DELAY);
+  
+      if(map(analogRead(TEMP_degC_MEAS_PIN), TEMP_ADC_MIN, TEMP_ADC_MAX, TEMP_MIN, TEMP_MAX) > TEMP_THRESHOLD)
+      {
+        overtemp_state = true;
+      }//end if
     }//end if
   }//end if
+  
   return;
 }//end func
 
