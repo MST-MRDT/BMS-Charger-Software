@@ -28,6 +28,8 @@ void setup()
   setInputPins();
   setOutputPins();
   setOutputStates();
+
+  Serial.println("Setup Complete.");
 } //end setup
 
 void loop()
@@ -73,34 +75,37 @@ void loop()
   }
 
   packet = RoveComm.read();
-    if(packet.data_id!=0)
+  if(packet.data_id!=0)
+  {
+    switch(packet.data_id)
     {
-      switch(packet.data_id)
+      case RC_BMSBOARD_SWESTOPs_DATAID:
       {
-        case RC_BMSBOARD_SWESTOPs_DATAID:
-        {
-          setEstop(packet.data[0]);
-          break;
-        }
-        //expand by adding more cases if more dataids are created
-      } //end switch
-    } //end if
+        setEstop(packet.data[0]);
+        break;
+      }
+      //expand by adding more cases if more dataids are created
+    } //end switch
+  } //end if
 
-    if((num_loop % UPDATE_ON_LOOP) == 0) //SW_IND led will blink while the code is looping and LCD will update
+  if((num_loop % UPDATE_ON_LOOP) == 0) //SW_IND led will blink while the code is looping and LCD will update
+  {
+    if(sw_ind_state == false)
     {
-      if(sw_ind_state == false)
-      {
-        digitalWrite(SW_IND_PIN, HIGH);
-        sw_ind_state = true;
-      }//end if
-      else
-      {
-        digitalWrite(SW_IND_PIN, LOW);
-        sw_ind_state = false;
-      }//end if
-      updateLCD(batt_temp, cell_voltages);
+      digitalWrite(SW_IND_PIN, HIGH);
+      sw_ind_state = true;
     }//end if
-    num_loop++;
+    else
+    {
+      digitalWrite(SW_IND_PIN, LOW);
+      sw_ind_state = false;
+    }//end if
+    updateLCD(batt_temp, cell_voltages);
+  }//end if
+
+  num_loop++;                  //Weird phenomenon: If you don't output num_loop on the serial monitor, then whenever
+  Serial.print("num_loop: ");  //the estop is released, num_loop increments much faster than the program loops (somehow) 
+  Serial.println(num_loop);    //and thus the SW_LED blinks and LCD updates much too fast.
 } //end loop
 
 
@@ -649,7 +654,7 @@ void notifyReboot() //Buzzer sound: beeeeeeeeeep beeep beeep
   delay(25);
   digitalWrite(BUZZER_CTR_PIN, LOW);
   digitalWrite(SW_ERR_PIN, LOW);
-  delay(100);
+  delay(600);
 
   digitalWrite(BUZZER_CTR_PIN, HIGH);
   digitalWrite(SW_ERR_PIN, HIGH);
