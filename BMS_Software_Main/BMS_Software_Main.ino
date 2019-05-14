@@ -50,6 +50,7 @@ void loop()
   reactLowVoltage(cell_voltages);
 
   getOutVoltage(pack_out_voltage);
+  reactEstopReleased();
   reactForgottenLogicSwitch();
 
   getBattTemp(batt_temp);
@@ -132,6 +133,7 @@ static bool forgotten_logic_switch = false;
 static int num_out_voltage_loops = 0;
 static int time_switch_forgotten = 0;
 static int time_switch_reminder = 0;
+static bool estop_released_beep = false;
 
 // Functions /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -307,13 +309,14 @@ void getOutVoltage(int &pack_out_voltage)
     time_switch_forgotten = 0;
     num_out_voltage_loops = 0;
   }//end if
-  if(pack_out_voltage < PACK_EFFECTIVE_ZERO)
+  if(pack_out_voltage < PACK_SAFETY_LOW)
   {
     delay(DEBOUNCE_DELAY);
 
-    if(((1269 *map(analogRead(PACK_V_MEAS_PIN), PACK_V_ADC_MIN, PACK_V_ADC_MAX, VOLTS_MIN, PACK_VOLTS_MAX)) / 1000) < PACK_EFFECTIVE_ZERO)
+    if(((1269 *map(analogRead(PACK_V_MEAS_PIN), PACK_V_ADC_MIN, PACK_V_ADC_MAX, VOLTS_MIN, PACK_VOLTS_MAX)) / 1000) < PACK_SAFETY_LOW)
     {
       forgotten_logic_switch = true;
+      estop_released_beep = false;
       num_out_voltage_loops++;
     }//end if 
   }//end if
@@ -324,7 +327,17 @@ void getOutVoltage(int &pack_out_voltage)
 
 void getBattTemp(uint32_t &batt_temp)
 {
-  meas_batt_temp[num_meas_batt_temp] = (1060 * (map(analogRead(TEMP_degC_MEAS_PIN), TEMP_ADC_MIN, TEMP_ADC_MAX, TEMP_MIN, TEMP_MAX))/1000);
+  int adc_reading = analogRead(TEMP_degC_MEAS_PIN);
+  if(adc_reading > TEMP_ADC_MAX)
+  {
+    adc_reading = TEMP_ADC_MAX;
+  }
+  if(adc_reading < TEMP_ADC_MIN)
+  {
+    adc_reading = TEMP_ADC_MIN;
+  }
+
+  meas_batt_temp[num_meas_batt_temp] = (1060 * (map(adc_reading, TEMP_ADC_MIN, TEMP_ADC_MAX, TEMP_MIN, TEMP_MAX))/1000);
   num_meas_batt_temp ++;
   
   if(num_meas_batt_temp % NUM_TEMP_AVERAGE == 0)
@@ -533,6 +546,17 @@ void reactForgottenLogicSwitch()
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void reactEstopReleased()
+{
+  if(forgotten_logic_switch == false && estop_released_beep == false)
+  {
+    estop_released_beep = true;
+    notifyEstopReleased();
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void reactLowVoltage( uint16_t cell_voltage[RC_BMSBOARD_VMEASmV_DATACOUNT])
 {
   if((cell_voltage[0] > PACK_UNDERVOLTAGE) && (cell_voltage[0] <= PACK_LOWVOLTAGE) && (low_voltage_state = false))//first instance of low voltage
@@ -640,7 +664,20 @@ void notifyLogicSwitch() //Buzzer sound: beeep beeep
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void notifyReboot() //Buzzer sound: beeeeeeeeeep beeep beeep
+void notifyEstopReleased() //Buzzer sound: beep
+{
+  digitalWrite(BUZZER_CTR_PIN, HIGH);
+  digitalWrite(SW_ERR_PIN, HIGH);
+  delay(75);
+  digitalWrite(BUZZER_CTR_PIN, LOW);
+  digitalWrite(SW_ERR_PIN, LOW);
+
+  return;
+}//end func
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void notifyReboot() //Buzzer sound: beeeeeeeeeeeeeeeeeeeep beeeeeeeeeep beeeeep beeep bep ... bep beeep beeeeep beeeeeeeeeep beeeeeeeeeeeeeeeeeeeep
 {
   digitalWrite(BUZZER_CTR_PIN, HIGH);
   digitalWrite(SW_ERR_PIN, HIGH);

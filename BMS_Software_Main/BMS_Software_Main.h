@@ -139,6 +139,9 @@ void reactOverTemp();
 void reactForgottenLogicSwitch();
 
 
+void reactEstopReleased();
+
+
 void reactLowVoltage(uint16_t cell_voltage[RC_BMSBOARD_VMEASmV_DATACOUNT]);
 
 
@@ -151,7 +154,10 @@ void notifyEstop(); //Buzzer sound: beeeeeeeeeeeeeeeeeeeep beeeeeeeeeep beeeeep 
 void notifyLogicSwitch(); //Buzzer sound: beeep beeep
 
 
-void notifyReboot(); //Buzzer sound: beeeeeeeeeep beeep beeep
+void notifyEstopReleased(); //Buzzer sound: beep
+
+
+void notifyReboot(); //Buzzer sound: beeeeeeeeeeeeeeeeeeeep beeeeeeeeeep beeeeep beeep bep ... bep beeep beeeeep beeeeeeeeeep beeeeeeeeeeeeeeeeeeeep
 
 
 void notifyOverCurrent(); //Buzzer Sound: beeeeeeeeeeeeeeeeeeeeeeeeeeeeeep
