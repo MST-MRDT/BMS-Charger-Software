@@ -98,7 +98,7 @@ void loop()
         digitalWrite(SW_IND_PIN, LOW);
         sw_ind_state = false;
       }//end if
-      updateLCD(main_current, cell_voltages);
+      updateLCD(batt_temp, cell_voltages);
     }//end if
     num_loop++;
 } //end loop
@@ -337,16 +337,17 @@ void getBattTemp(uint32_t &batt_temp)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void updateLCD(int32_t mainCurrent, uint16_t cellVoltages[])
+void updateLCD(uint16_t batt_temp, uint16_t cellVoltages[])
 {  
   const int NUM_CELLS = 8; //this should be in header?
   bool LCD_Update = false;
   float time1 = 0;
   float packVoltage = 0; //V not mV
-  float packCurrent = 0;//A not mA
+  float packTemp = 0; //degC not mdegC
 
   packVoltage = (static_cast<float>(cellVoltages[0]) / 1000);
-  packCurrent = (static_cast<float>(mainCurrent) / 1000);
+  packTemp = (static_cast<float>(batt_temp) / 1000);
+  packTemp = roundf(packTemp * 10) / 10; //Rounds temp to closest tenth of a degree
 
   if(LCD_Update == false)
   {
@@ -359,11 +360,11 @@ void updateLCD(int32_t mainCurrent, uint16_t cellVoltages[])
   Serial3.write('-'); //Clear display
   
   Serial3.print("Pack:");
-  Serial3.print(packVoltage, 1); //packVoltage from BMS, in V?
+  Serial3.print(packVoltage, 1); //packVoltage from BMS, in V
   Serial3.print("V");
-  Serial3.print(" Cur:");
-  Serial3.print(packCurrent, 2); //packCurrent from BMS, in A?
-  Serial3.print("A");
+  Serial3.print(" Tmp:");
+  Serial3.print(packTemp, 1); //packTemp from BMS, in C
+  Serial3.print("C");
   
   for(int i = 0; i < NUM_CELLS; i++)
   {
@@ -770,9 +771,7 @@ void notifyLowVoltage() //Buzzer Sound: beeep beeep beeep
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void startScreen()
-{
-  
-  // put your main code here, to run repeatedly: 
+{ 
   delay(350);
   //Send the clear command to the display - this returns the cursor to the beginning of the display
   Serial3.write('|'); //Setting character
@@ -785,11 +784,11 @@ void startScreen()
   Serial3.write(0x20);
   Serial3.write(0x20);*/
   
-  
   //movingRover();
   Serial3.write('|'); //Setting character
   Serial3.write('-'); //Clear display
-  for(int i = 0; i<4; i++)
+  
+  for(int i = 0; i<3; i++)
   {
     asterisks();
     stars();
@@ -804,13 +803,13 @@ void movingRover()
 {
   Serial3.write('|'); //Setting character
   Serial3.write('-'); //Clear display
-for(int i = 0; i<14;i++)
-{
+  
+  for(int i = 0; i<14;i++)
+  {
     delay(450);
-   //delay(200);
+    //delay(200);
     //Serial3.write(0x20);
-   // Serial3.write(0x20);
-   
+    //Serial3.write(0x20);
     Serial3.write(0x20);
     Serial3.write(0x20);
     Serial3.write(0x20);
@@ -853,10 +852,10 @@ for(int i = 0; i<14;i++)
     Serial3.write(0x20);
     Serial3.write(0x20);
     
-      Serial3.write(0xDB);
-      Serial3.write(0xBA);
-      Serial3.write(0xDA);
-      Serial3.write(0xCD);
+    Serial3.write(0xDB);
+    Serial3.write(0xBA);
+    Serial3.write(0xDA);
+    Serial3.write(0xCD);
    
     Serial3.write(0x20);
     Serial3.write(0x20);
@@ -874,11 +873,11 @@ for(int i = 0; i<14;i++)
     Serial3.write(0x20);
     Serial3.write(0x20);
        
-      Serial3.write(0x6F);
-      Serial3.write(0x5E);
-      Serial3.write(0x6F);
-      Serial3.write(0x5E);
-      Serial3.write(0x6F);
+    Serial3.write(0x6F);
+    Serial3.write(0x5E);
+    Serial3.write(0x6F);
+    Serial3.write(0x5E);
+    Serial3.write(0x6F);
       
     Serial3.write(0x20);
     Serial3.write(0x20);
@@ -911,6 +910,7 @@ for(int i = 0; i<14;i++)
     Serial3.write(0x52);//R
     Serial3.write(0x44);//D*/
   }
+
   Serial3.write('|'); //Setting character
   Serial3.write('-'); //Clear display
 }
@@ -924,7 +924,7 @@ void asterisks()
   Serial3.write(0x4C);//L
   Serial3.write(0x4B);//K
   Serial3.write(0x59);//Y
-    ////////////////////////////////////////////////////////////////need a y
+  ////////////////////////////////////////////////////////////////need a y
   Serial3.write(0x52);//R
   Serial3.write(0x49);//I
   Serial3.write(0x45);//E
@@ -959,7 +959,7 @@ void asterisks()
   Serial3.write(0x20);
   Serial3.write(0x20);
   
-    Serial3.write(0xA1);
+  Serial3.write(0xA1);
   
   Serial3.write(0x20);
   Serial3.write(0x20);
@@ -978,10 +978,10 @@ void asterisks()
   Serial3.write(0x20);
   Serial3.write(0x2A);
   Serial3.write(0x20);
-    Serial3.write(0xDB);
-    Serial3.write(0xBA);
-    Serial3.write(0xDA);
-    Serial3.write(0xCD);
+  Serial3.write(0xDB);
+  Serial3.write(0xBA);
+  Serial3.write(0xDA);
+  Serial3.write(0xCD);
   Serial3.write(0x20);
   Serial3.write(0x20);
   Serial3.write(0x20);
@@ -997,11 +997,11 @@ void asterisks()
   Serial3.write(0x20);
   Serial3.write(0x20);
   Serial3.write(0x20);   
-    Serial3.write(0x6F);
-    Serial3.write(0x5E);
-    Serial3.write(0x6F);
-    Serial3.write(0x5E);
-    Serial3.write(0x6F);
+  Serial3.write(0x6F);
+  Serial3.write(0x5E);
+  Serial3.write(0x6F);
+  Serial3.write(0x5E);
+  Serial3.write(0x6F);
   Serial3.write(0x20);
   Serial3.write(0x2A);
   //Serial3.write(0x2A);
@@ -1056,7 +1056,7 @@ void stars()
   Serial3.write(0x2B);
   Serial3.write(0x20);
   Serial3.write(0x20);
-     Serial3.write(0xA1);
+  Serial3.write(0xA1);
   Serial3.write(0x20);
   Serial3.write(0x20);
   Serial3.write(0x2A);
@@ -1074,10 +1074,10 @@ void stars()
   Serial3.write(0x20);
   Serial3.write(0x2B);
   Serial3.write(0x20);
-    Serial3.write(0xDB);
-    Serial3.write(0xBA);
-    Serial3.write(0xDA);
-    Serial3.write(0xCD);
+  Serial3.write(0xDB);
+  Serial3.write(0xBA);
+  Serial3.write(0xDA);
+  Serial3.write(0xCD);
   Serial3.write(0x20);
   Serial3.write(0x20);
   Serial3.write(0x20);
@@ -1093,11 +1093,11 @@ void stars()
   Serial3.write(0x20);
   Serial3.write(0x20);
   Serial3.write(0x20);   
-    Serial3.write(0x6F);
-    Serial3.write(0x5E);
-    Serial3.write(0x6F);
-    Serial3.write(0x5E);
-    Serial3.write(0x6F);
+  Serial3.write(0x6F);
+  Serial3.write(0x5E);
+  Serial3.write(0x6F);
+  Serial3.write(0x5E);
+  Serial3.write(0x6F);
   Serial3.write(0x20);
   Serial3.write(0x2B);
   //Serial3.write(0x2B);

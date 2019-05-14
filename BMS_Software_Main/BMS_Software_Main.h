@@ -18,7 +18,7 @@ RoveCommEthernetUdp RoveComm; //extantiates a class
 //
 // Control Pins
 #define PACK_OUT_CTR_PIN    	PD_1
-#define LOGIC_SWITCH_CTR_PIN  PD_0
+#define LOGIC_SWITCH_CTR_PIN  	PD_0
 #define BUZZER_CTR_PIN      	PN_2
 #define FAN_1_CTR_PIN     		PH_2
 #define FAN_2_CTR_PIN     		PH_3
@@ -32,7 +32,7 @@ RoveCommEthernetUdp RoveComm; //extantiates a class
 #define PACK_I_MEAS_PIN     	PE_0
 #define PACK_V_MEAS_PIN     	PE_1 //Measures voltage outputting to rover. Will read zero if PACK_OUT_CTR is LOW.
 #define LOGIC_V_MEAS_PIN    	PE_2 //Measures total voltage of pack continuously while logic switch is on. 
-#define TEMP_degC_MEAS_PIN    PE_3 //Board routes to PM_3 but its not an analog pin. Must fix in hardware design
+#define TEMP_degC_MEAS_PIN    	PE_3 //Board routes to PM_3 but its not an analog pin. Must fix in hardware design
 #define C1_V_MEAS_PIN     		PK_3 //CELL 1 - GND
 #define C2_V_MEAS_PIN     		PK_2 //CELL 2 - CELL 1
 #define C3_V_MEAS_PIN     		PK_1 //CELL 3 - CELL 2
@@ -58,8 +58,8 @@ const int CELL_MEAS_PINS[] = {LOGIC_V_MEAS_PIN, C1_V_MEAS_PIN, C2_V_MEAS_PIN, C3
 #define SENSOR_SCALE         	0.5
 #define SENSOR_BIAS          	VCC * SENSOR_SCALE //Viout voltage when current is at 0A (aka quiescent output voltage)
                           						 // Noise is 2mV, meaning the smallest current that the device is able to resolve is 0.3A
-#define CURRENT_MAX           200000//mA; Current values must be sent over RoveComm as mA
-#define CURRENT_MIN           -196207//mA
+#define CURRENT_MAX           	200000//mA; Current values must be sent over RoveComm as mA
+#define CURRENT_MIN           	-196207//mA
 #define OVERCURRENT         	50000 //mA
 #define CURRENT_ADC_MIN     	0 //bits
 #define CURRENT_ADC_MAX     	4096 //bits
@@ -123,7 +123,7 @@ void getOutVoltage(int &pack_out_voltage);
 void getBattTemp(uint32_t &batt_temp);
 
 
-void updateLCD(int32_t mainCurrent, uint16_t cellVoltages[]);
+void updateLCD(uint16_t batt_temp, uint16_t cellVoltages[]);
 
 
 void reactOverCurrent();
@@ -161,14 +161,16 @@ void notifyUnderVoltage(); //Buzzer Sound: beeep beeep beeep beeep beeeeeeeeeeee
 
 void notifyLowVoltage(); //Buzzer Sound: beeep beeep beeep
 
+
 void startScreen();
+
 
 void stars();
 
+
 void asterisks();
 
+
 void movingRover();
-
-
 
 #endif
