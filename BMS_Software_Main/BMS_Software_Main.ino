@@ -328,6 +328,7 @@ void getOutVoltage(int &pack_out_voltage)
 void getBattTemp(uint32_t &batt_temp)
 {
   int adc_reading = analogRead(TEMP_degC_MEAS_PIN);
+  Serial.println(adc_reading);
   if(adc_reading > TEMP_ADC_MAX)
   {
     adc_reading = TEMP_ADC_MAX;
@@ -337,9 +338,9 @@ void getBattTemp(uint32_t &batt_temp)
     adc_reading = TEMP_ADC_MIN;
   }
 
-  meas_batt_temp[num_meas_batt_temp] = (1060 * (map(adc_reading, TEMP_ADC_MIN, TEMP_ADC_MAX, TEMP_MIN, TEMP_MAX))/1000);
+  meas_batt_temp[num_meas_batt_temp] = (1000 * (map(adc_reading, TEMP_ADC_MIN, TEMP_ADC_MAX, TEMP_MIN, TEMP_MAX))/1000);
   num_meas_batt_temp ++;
-  
+  Serial.println(meas_batt_temp[num_meas_batt_temp]);
   if(num_meas_batt_temp % NUM_TEMP_AVERAGE == 0)
   {
     for(int i = 0; i < NUM_TEMP_AVERAGE; i++)
@@ -350,8 +351,8 @@ void getBattTemp(uint32_t &batt_temp)
     num_meas_batt_temp = 0;
     batt_temp_avail = true; //Set to true after first batt_temp value is avail. Avoids acting on overtemp before the first average is computed.
   
-    //Serial.print("batt_temp: ");
-    //Serial.println(batt_temp);
+    Serial.print("batt_temp: ");
+    Serial.println(batt_temp);
   }//end if
   
   if(batt_temp_avail == true)
@@ -839,7 +840,14 @@ void startScreen()
   //Send the clear command to the display - this returns the cursor to the beginning of the display
   Serial3.write('|'); //Setting character
   Serial3.write('-'); //Clear display
-  
+
+  /*Serial7.write('|');
+Serial7.write(128 + 29);
+Serial7.write('|');
+Serial7.write(158+0);
+Serial7.write('|');
+Serial7.write(188+0);*/
+
   /*Serial3.write(0x20);
   Serial3.write(0x20);
   Serial3.write(0x20);
